@@ -30,6 +30,17 @@ async fn main() -> Result<(), reqwest::Error> {
         let quote: Quote = response.json().await?;
         write_text(quote.quote.as_str());
 
+        // for rpi only
+        match std::process::Command::new("sudo")
+            .arg("epaper")
+            .arg("monitor.bmp")
+            .status() {
+            Ok(_status) => {}
+            Err(err) => {
+                println!("{:?}", err);
+            }
+        }
+
         sleep(Duration::from_secs(60 * 30));
     }
 }

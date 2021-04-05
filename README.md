@@ -2,6 +2,8 @@
 
 setup from: https://www.waveshare.com/wiki/9.7inch_e-Paper_HAT
 
+size: 1200 × 825 
+
 ```
 tar zxvf bcm2835-1.xx.tar.gz
 cd bcm2835-1.xx

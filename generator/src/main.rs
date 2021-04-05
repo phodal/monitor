@@ -43,25 +43,36 @@ async fn main() -> Result<(), reqwest::Error> {
 
         sleep(Duration::from_secs(60 * 30));
     }
+
+    Ok(())
 }
 
-fn write_text(text: &str) {
+fn write_text(origin: &str) {
     let path = Path::new("monitor.bmp");
 
     let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
 
-    let font = Vec::from(include_bytes!("wqy-microhei.ttc") as &[u8]);
+    let font = Vec::from(include_bytes!("SourceCodePro-Regular.ttf") as &[u8]);
     let font = Font::try_from_vec(font).unwrap();
 
-    let height = 40.0;
+    let height = 80.0;
     let scale = Scale {
         x: height,
         y: height,
     };
 
-    draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, 0, scale, &font, text);
-    let (w, h) = text_size(scale, &font, text);
-    println!("Text size: {}x{}", w, h);
+    let sub_len = 32;
+    let chars: Vec<char> = origin.chars().collect();
+    let subs = &chars.chunks(sub_len)
+        .map(|chunk| chunk.iter().collect::<String>())
+        .collect::<Vec<_>>();
+
+    let mut index = 0;
+    for sub in subs {
+        let y = index * 80;
+        draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, y, scale, &font, sub.as_str());
+        index = index + 1;
+    }
 
     let _ = image.save(path).unwrap();
 }

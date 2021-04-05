@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "miniGUI.h"
 
 #define CS 				8
 #define HRDY 	        24
@@ -127,6 +128,11 @@ typedef struct
 
 uint8_t IT8951_Init(void);
 void IT8951_Cancel(void);
+void IT8951DisplayExample(void);
+void IT8951DisplayExample2(void);
+void IT8951Display1bppExample2(void);
+void IT8951DisplayExample3(void);
+void IT8951_GUI_Example(void);
 void IT8951_BMP_Example(uint32_t x, uint32_t y,char *path);
 
 uint16_t IT8951ReadReg(uint16_t usRegAddr);
@@ -146,3 +152,18 @@ uint16_t IT8951GetVCOM(void);
 void IT8951SetVCOM(uint16_t vcom);
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

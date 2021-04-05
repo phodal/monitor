@@ -8,34 +8,15 @@ use serde::{Serialize, Deserialize};
 use reqwest::Client;
 
 #[derive(Deserialize, Serialize, Debug)]
-struct TaskList {
-    value: Vec<Item>,
-    #[serde(flatten, rename = "@odata.context")]
-    data_context: String,
-}
-
-
-#[derive(Deserialize, Serialize, Debug)]
-struct Item {
-    #[serde(flatten, rename = "@odata.etag")]
-    data_etag: String,
-    importance: String,
-    #[serde(flatten, rename = "isReminderOn")]
-    is_reminder_on: bool,
-    status: bool,
-    title: String,
-    #[serde(flatten, rename = "createdDateTime")]
-    created_date_time: String,
-    #[serde(flatten, rename = "lastModifiedDateTime")]
-    last_modified_date_time: String,
-    id: String,
+struct Quote {
+    id: i32,
+    quote: String,
+    author: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
-    let request_url = format!("https://graph.microsoft.com/v1.0/me/todo/lists/{id}/tasks",
-                              id = "AQMkADAwATM0MDAAMS04N2E2LWRhMDItMDACLTAwCgAuAAADlaHHnFnn1UuoFE2pMt0j5QEAaMraZPkN_0mltv0IMNqe5wAD5QRmOQAAAA==");
-    println!("{}", request_url);
+    let request_url = format!("https://api.taylor.rest/");
     let client = Client::new();
     let response =
         client.get(&request_url)
@@ -43,15 +24,13 @@ async fn main() -> Result<(), reqwest::Error> {
             .send()
             .await?;
 
-    println!("{:?}", response.text().await?);
-    // let users: Vec<TaskList> = response.json().await?;
-    // println!("{:?}", users);
-    write_text();
+    let quote: Quote = response.json().await?;
+    write_text(quote.quote.as_str());
 
     Ok(())
 }
 
-fn write_text() {
+fn write_text(text: &str) {
     let path = Path::new("monitor.bmp");
 
     let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
@@ -59,13 +38,12 @@ fn write_text() {
     let font = Vec::from(include_bytes!("wqy-microhei.ttc") as &[u8]);
     let font = Font::try_from_vec(font).unwrap();
 
-    let height = 80.0;
+    let height = 40.0;
     let scale = Scale {
         x: height,
         y: height,
     };
 
-    let text = "你好，世界。";
     draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, 0, scale, &font, text);
     let (w, h) = text_size(scale, &font, text);
     println!("Text size: {}x{}", w, h);

@@ -6,6 +6,8 @@ use image::ImageBuffer;
 
 use serde::{Serialize, Deserialize};
 use reqwest::Client;
+use std::thread::sleep;
+use std::time::Duration;
 
 #[derive(Deserialize, Serialize, Debug)]
 struct Quote {
@@ -16,18 +18,20 @@ struct Quote {
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
-    let request_url = format!("https://api.taylor.rest/");
-    let client = Client::new();
-    let response =
-        client.get(&request_url)
-            .bearer_auth("")
-            .send()
-            .await?;
+    loop {
+        let request_url = format!("https://api.taylor.rest/");
+        let client = Client::new();
+        let response =
+            client.get(&request_url)
+                .bearer_auth("")
+                .send()
+                .await?;
 
-    let quote: Quote = response.json().await?;
-    write_text(quote.quote.as_str());
+        let quote: Quote = response.json().await?;
+        write_text(quote.quote.as_str());
 
-    Ok(())
+        sleep(Duration::from_secs(60 * 30));
+    }
 }
 
 fn write_text(text: &str) {

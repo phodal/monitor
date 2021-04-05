@@ -17,30 +17,30 @@ typedef struct
   uint16_t Y;
 }Point, *pPoint; 
 
-//14byteÎÄ¼þÍ·
+//14byteæ–‡ä»¶å¤´
 typedef struct
 {
-	uint16_t cfType;//ÎÄ¼þÀàÐÍ£¬"BM"(0x4D42)
-	uint32_t cfSize;//ÎÄ¼þ´óÐ¡£¨×Ö½Ú£©
-	uint32_t cfReserved;//±£Áô£¬ÖµÎª0
-	uint32_t cfoffBits;//Êý¾ÝÇøÏà¶ÔÓÚÎÄ¼þÍ·µÄÆ«ÒÆÁ¿£¨×Ö½Ú£©
+	uint16_t cfType;//æ–‡ä»¶ç±»åž‹ï¼Œ"BM"(0x4D42)
+	uint32_t cfSize;//æ–‡ä»¶å¤§å°ï¼ˆå­—èŠ‚ï¼‰
+	uint32_t cfReserved;//ä¿ç•™ï¼Œå€¼ä¸º0
+	uint32_t cfoffBits;//æ•°æ®åŒºç›¸å¯¹äºŽæ–‡ä»¶å¤´çš„åç§»é‡ï¼ˆå­—èŠ‚ï¼‰
 }__attribute__((packed)) BITMAPFILEHEADER;
-//__attribute__((packed))µÄ×÷ÓÃÊÇ¸æËß±àÒëÆ÷È¡Ïû½á¹¹ÔÚ±àÒë¹ý³ÌÖÐµÄÓÅ»¯¶ÔÆë
+//__attribute__((packed))çš„ä½œç”¨æ˜¯å‘Šè¯‰ç¼–è¯‘å™¨å–æ¶ˆç»“æž„åœ¨ç¼–è¯‘è¿‡ç¨‹ä¸­çš„ä¼˜åŒ–å¯¹é½
  
-//40byteÐÅÏ¢Í·
+//40byteä¿¡æ¯å¤´
 typedef struct
 {
 	uint32_t ciSize;//40
-	uint32_t ciWidth;//¿í¶È
-	uint32_t ciHeight;//¸ß¶È
-	uint16_t ciPlanes;//Ä¿±êÉè±¸µÄÎ»Æ½ÃæÊý£¬ÖµÎª1
-	uint16_t ciBitCount;//Ã¿¸öÏñËØµÄÎ»Êý
-	uint32_t ciCompress;//Ñ¹ËõËµÃ÷
-	uint32_t ciSizeImage;//ÓÃ×Ö½Ú±íÊ¾µÄÍ¼Ïñ´óÐ¡£¬¸ÃÊý¾Ý±ØÐëÊÇ4µÄ±¶Êý
-	uint32_t ciXPelsPerMeter;//Ä¿±êÉè±¸µÄË®Æ½ÏñËØÊý/Ã×
-	uint32_t ciYPelsPerMeter;//Ä¿±êÉè±¸µÄ´¹Ö±ÏñËØÊý/Ã×
-	uint32_t ciClrUsed;//Î»Í¼Ê¹ÓÃµ÷É«°åµÄÑÕÉ«Êý
-	uint32_t ciClrImportant;//Ö¸¶¨ÖØÒªµÄÑÕÉ«Êý£¬µ±¸ÃÓòµÄÖµµÈÓÚÑÕÉ«ÊýÊ±£¨»òÕßµÈÓÚ0Ê±£©£¬±íÊ¾ËùÓÐÑÕÉ«¶¼Ò»ÑùÖØÒª
+	uint32_t ciWidth;//å®½åº¦
+	uint32_t ciHeight;//é«˜åº¦
+	uint16_t ciPlanes;//ç›®æ ‡è®¾å¤‡çš„ä½å¹³é¢æ•°ï¼Œå€¼ä¸º1
+	uint16_t ciBitCount;//æ¯ä¸ªåƒç´ çš„ä½æ•°
+	uint32_t ciCompress;//åŽ‹ç¼©è¯´æ˜Ž
+	uint32_t ciSizeImage;//ç”¨å­—èŠ‚è¡¨ç¤ºçš„å›¾åƒå¤§å°ï¼Œè¯¥æ•°æ®å¿…é¡»æ˜¯4çš„å€æ•°
+	uint32_t ciXPelsPerMeter;//ç›®æ ‡è®¾å¤‡çš„æ°´å¹³åƒç´ æ•°/ç±³
+	uint32_t ciYPelsPerMeter;//ç›®æ ‡è®¾å¤‡çš„åž‚ç›´åƒç´ æ•°/ç±³
+	uint32_t ciClrUsed;//ä½å›¾ä½¿ç”¨è°ƒè‰²æ¿çš„é¢œè‰²æ•°
+	uint32_t ciClrImportant;//æŒ‡å®šé‡è¦çš„é¢œè‰²æ•°ï¼Œå½“è¯¥åŸŸçš„å€¼ç­‰äºŽé¢œè‰²æ•°æ—¶ï¼ˆæˆ–è€…ç­‰äºŽ0æ—¶ï¼‰ï¼Œè¡¨ç¤ºæ‰€æœ‰é¢œè‰²éƒ½ä¸€æ ·é‡è¦
 }__attribute__((packed)) BITMAPINFOHEADER;
 
 typedef struct
@@ -49,7 +49,7 @@ typedef struct
 	uint8_t green;
 	uint8_t red;
 	uint8_t reserved;
-}__attribute__((packed)) PIXEL;//ÑÕÉ«Ä£Ê½RGB
+}__attribute__((packed)) PIXEL;//é¢œè‰²æ¨¡å¼RGB
 
 #define ABS(X)    ((X) > 0 ? (X) : -(X))     
 

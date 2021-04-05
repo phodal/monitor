@@ -764,7 +764,7 @@ void IT8951_BMP_Example(uint32_t x, uint32_t y,char *path)
 	
 	EPD_Clear(0xff);
 	
-	//ÏÔÊ¾Í¼Ïñ
+	//æ˜¾ç¤ºå›¾åƒ
 	Show_bmp(x,y,path);
 
 	IT8951WaitForDisplayReady();

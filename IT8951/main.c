@@ -8,6 +8,8 @@ int main (int argc, char *argv[])
 		return 1;
 	}
 
+    IT8951WaitForDisplayReady();
+
 	if (argc != 2)
 	{
 		printf("Error: argc!=2.\n");

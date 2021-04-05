@@ -143,6 +143,7 @@ void gpio_i80_16b_cmd_out(uint16_t usCmd);
 void GPIO_Configuration_Out(void);
 void GPIO_Configuration_In(void);
 
+void IT8951WaitForDisplayReady();
 void IT8951DisplayClear(void);
 
 //uint16_t IT8951ReadReg(uint16_t usRegAddr);

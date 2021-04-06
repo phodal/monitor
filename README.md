@@ -1,4 +1,16 @@
-# monitor
+# Monitor
+
+> Raspberry Pi with e-paper Monitor.
+
+ - [x] MVP
+    - [x] simplify IT8951 code
+    - [x] with Rust
+    - [x] call with Rust
+    - [x] interval timer
+
+## Setup
+
+### Setup Raspberry Pi
 
 setup from: https://www.waveshare.com/wiki/9.7inch_e-Paper_HAT
 
@@ -23,17 +35,3 @@ make
 sudo ./IT8951 0 0 01.bmp
 ```
 
-## Tasks
-
-```
-https://graph.microsoft.com/v1.0/me/todo/lists/
-```
-
-
-see in: [https://docs.microsoft.com/en-us/graph/api/todotasklist-list-tasks?view=graph-rest-1.0&tabs=http](https://docs.microsoft.com/en-us/graph/api/todotasklist-list-tasks?view=graph-rest-1.0&tabs=http)
-
-Task by id
-
-```
-https://graph.microsoft.com/v1.0/me/todo/lists/AQMkADAwATM0MDAAMS04N2E2LWRhMDItMDACLTAwCgAuAAADlaHHnFnn1UuoFE2pMt0j5QEAaMraZPkN_0mltv0IMNqe5wAD5QRmOQAAAA==/tasks
-```

@@ -40,7 +40,6 @@ fn execute_command() {
 
 #[cfg(target_os = "linux")]
 fn execute_command() {
-    // for rpi only
     match std::process::Command::new("sudo")
         .arg("epaper")
         .arg("monitor.bmp")

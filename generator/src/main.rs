@@ -72,9 +72,9 @@ fn write_sentence(origin: &str) {
         .map(|chunk| chunk.iter().collect::<String>())
         .collect::<Vec<_>>();
 
-    let utc: DateTime<Utc> = Utc::now();
-    let text = format!("updated time: {:?}", utc);
-    draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, 0, small_scale, &font, text.as_str());
+    let time = time_now();
+    draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, 0, small_scale, &font, time.as_str());
+
     let offset = 40;
 
     let mut index = 0;
@@ -85,4 +85,11 @@ fn write_sentence(origin: &str) {
     }
 
     let _ = image.save(path).unwrap();
+}
+
+fn time_now() -> String {
+    let utc: DateTime<Local> = Local::now();
+    let delayed_format = utc.format("%Y-%m-%d %H:%M:%S");
+
+    format!("updated time: {}", delayed_format.to_string())
 }

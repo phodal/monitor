@@ -60,17 +60,13 @@ fn write_sentence(origin: &str) {
 
     let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
 
-    let font = Vec::from(include_bytes!("SourceCodePro-Regular.ttf") as &[u8]);
-    let font = Font::try_from_vec(font).unwrap();
+    let font = read_font("SourceCodePro-Regular.ttf");
 
-    let main_scale = Scale { x: 80.0, y: 80.0, };
-    let small_scale = Scale { x: 40.0, y: 40.0, };
+    let main_scale = Scale { x: 80.0, y: 80.0 };
+    let small_scale = Scale { x: 40.0, y: 40.0 };
 
     let sub_len = 31;
-    let chars: Vec<char> = origin.chars().collect();
-    let subs = &chars.chunks(sub_len)
-        .map(|chunk| chunk.iter().collect::<String>())
-        .collect::<Vec<_>>();
+    let subs = text_to_vec(origin, sub_len);
 
     let time = time_now();
     draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, 0, small_scale, &font, time.as_str());
@@ -85,6 +81,21 @@ fn write_sentence(origin: &str) {
     }
 
     let _ = image.save(path).unwrap();
+}
+
+fn read_font(font_file: &str) -> Font<'static> {
+    let font = Vec::from(include_bytes!(font_file) as &[u8]);
+    let font = Font::try_from_vec(font).unwrap();
+    font
+}
+
+fn text_to_vec(origin: &str, sub_len: usize) -> Vec<String> {
+    let chars: Vec<char> = origin.chars().collect();
+    let subs = &chars.chunks(sub_len)
+        .map(|chunk| chunk.iter().collect::<String>())
+        .collect::<Vec<_>>();
+
+    subs.to_vec()
 }
 
 fn time_now() -> String {

@@ -7,6 +7,7 @@ use serde::{Serialize, Deserialize};
 use reqwest::Client;
 use std::thread::sleep;
 use std::time::Duration;
+use chrono::prelude::*;
 
 #[derive(Deserialize, Serialize, Debug)]
 struct Quote {
@@ -27,7 +28,8 @@ async fn main() -> Result<(), reqwest::Error> {
                 .await?;
 
         let quote: Quote = response.json().await?;
-        write_text(quote.quote.as_str());
+
+        write_sentence(quote.quote.as_str());
 
         execute_command();
     }
@@ -53,7 +55,7 @@ fn execute_command() {
     sleep(Duration::from_secs(60 * 30));
 }
 
-fn write_text(origin: &str) {
+fn write_sentence(origin: &str) {
     let path = Path::new("monitor.bmp");
 
     let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
@@ -61,11 +63,8 @@ fn write_text(origin: &str) {
     let font = Vec::from(include_bytes!("SourceCodePro-Regular.ttf") as &[u8]);
     let font = Font::try_from_vec(font).unwrap();
 
-    let height = 80.0;
-    let scale = Scale {
-        x: height,
-        y: height,
-    };
+    let main_scale = Scale { x: 80.0, y: 80.0, };
+    let small_scale = Scale { x: 40.0, y: 40.0, };
 
     let sub_len = 31;
     let chars: Vec<char> = origin.chars().collect();
@@ -73,10 +72,15 @@ fn write_text(origin: &str) {
         .map(|chunk| chunk.iter().collect::<String>())
         .collect::<Vec<_>>();
 
+    let utc: DateTime<Utc> = Utc::now();
+    let text = format!("updated time: {:?}", utc);
+    draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, 0, small_scale, &font, text.as_str());
+    let offset = 40;
+
     let mut index = 0;
     for sub in subs {
-        let y = index * 80;
-        draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, y, scale, &font, sub.as_str());
+        let y = index * 80 + offset;
+        draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, y, main_scale, &font, sub.as_str());
         index = index + 1;
     }
 

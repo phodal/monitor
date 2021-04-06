@@ -1,8 +1,7 @@
-use image::{Rgb};
-use imageproc::drawing::{draw_text_mut, text_size};
+use image::{Rgb, ImageBuffer};
+use imageproc::drawing::{draw_text_mut};
 use rusttype::{Font, Scale};
 use std::path::Path;
-use image::ImageBuffer;
 
 use serde::{Serialize, Deserialize};
 use reqwest::Client;
@@ -43,8 +42,6 @@ async fn main() -> Result<(), reqwest::Error> {
 
         sleep(Duration::from_secs(60 * 30));
     }
-
-    Ok(())
 }
 
 fn write_text(origin: &str) {
@@ -61,7 +58,7 @@ fn write_text(origin: &str) {
         y: height,
     };
 
-    let sub_len = 32;
+    let sub_len = 31;
     let chars: Vec<char> = origin.chars().collect();
     let subs = &chars.chunks(sub_len)
         .map(|chunk| chunk.iter().collect::<String>())

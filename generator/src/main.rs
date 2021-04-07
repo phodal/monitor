@@ -71,10 +71,10 @@ fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
 
 fn draw_sentence(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
     let main_scale = Scale { x: 80.0, y: 80.0 };
-    let (w, h) = text_size(main_scale, &font, "您");
+    let (w, h) = text_size(main_scale, &font, text);
     println!("width: {:?}, height: {:?}", w, h);
 
-    let sub_len: usize = (WIDTH / w as u32) as usize;
+    let sub_len: usize = (WIDTH / h as u32) as usize;
     print!("sub_len: {:?}", sub_len);
     let subs = text_to_vec(text, sub_len);
     let mut index = 0;

@@ -17,6 +17,8 @@ struct Quote {
     author: String,
 }
 
+const FONT_BYTES: &'static [u8] = include_bytes!("wqy-microhei.ttc");
+
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
     loop {
@@ -88,8 +90,7 @@ fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font) -> u32 {
 }
 
 fn read_font() -> Font<'static> {
-    let str = include_bytes!("wqy-microhei.ttc") as &[u8];
-    let font = Vec::from(str);
+    let font = Vec::from(FONT_BYTES);
     let font = Font::try_from_vec(font).unwrap();
     font
 }

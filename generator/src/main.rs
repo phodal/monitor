@@ -13,13 +13,14 @@ use serde::{Deserialize, Serialize};
 struct Quote {
     id: i32,
     quote: String,
+    solution: String,
     author: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
     loop {
-        let request_url = format!("https://api.taylor.rest/");
+        let request_url = format!("https://phodal.github.io/monitor-api/api.json");
         let client = Client::new();
         let response =
             client.get(&request_url)
@@ -29,7 +30,7 @@ async fn main() -> Result<(), reqwest::Error> {
         let quote: Quote = response.json().await?;
 
         let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
-        draw_image(quote.quote.as_str(), &mut image);
+        draw_image(quote, &mut image);
         let _ = image.save(Path::new("monitor.bmp")).unwrap();
 
         execute_command();
@@ -56,11 +57,12 @@ fn execute_command() {
     sleep(Duration::from_secs(60 * 30));
 }
 
-fn draw_image(origin: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
+fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let font = read_font();
 
     let time_height = draw_time(image, &font);
-    draw_sentence(origin, image, &font, time_height)
+    draw_sentence(quote.quote.as_str(), image, &font, time_height);
+    draw_sentence(quote.solution.as_str(), image, &font, time_height + 80);
 }
 
 fn draw_sentence(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
@@ -86,7 +88,7 @@ fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font) -> u32 {
 }
 
 fn read_font() -> Font<'static> {
-    let str = include_bytes!("SourceCodePro-Regular.ttf") as &[u8];
+    let str = include_bytes!("wqy-microhei.ttc") as &[u8];
     let font = Vec::from(str);
     let font = Font::try_from_vec(font).unwrap();
     font

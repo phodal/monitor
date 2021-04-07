@@ -1,14 +1,13 @@
-use image::{Rgb, ImageBuffer};
-use imageproc::drawing::{draw_text_mut};
-use rusttype::{Font, Scale};
 use std::path::Path;
-
-use serde::{Serialize, Deserialize};
-use reqwest::Client;
 use std::thread::sleep;
 use std::time::Duration;
+
 use chrono::prelude::*;
-use std::alloc::Global;
+use image::{ImageBuffer, Rgb};
+use imageproc::drawing::draw_text_mut;
+use reqwest::Client;
+use rusttype::{Font, Scale};
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug)]
 struct Quote {
@@ -60,13 +59,11 @@ fn execute_command() {
 fn draw_image(origin: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let font = read_font();
 
-
     let time_height = draw_time(image, &font);
-
     draw_sentence(origin, image, &font, time_height)
 }
 
-fn draw_sentence(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: i32) {
+fn draw_sentence(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
     let sub_len = 31;
     let subs = text_to_vec(text, sub_len);
     let mut index = 0;
@@ -78,7 +75,7 @@ fn draw_sentence(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &F
     }
 }
 
-fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font) -> i32 {
+fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font) -> u32 {
     let small_scale = Scale { x: 40.0, y: 40.0 };
 
     let time = time_now();

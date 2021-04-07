@@ -19,6 +19,7 @@ struct Quote {
 
 const FONT_BYTES: &'static [u8] = include_bytes!("wqy-microhei.ttc");
 const WIDTH: u32 = 1280;
+const HEIGHT: u32 = 825;
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
@@ -32,7 +33,7 @@ async fn main() -> Result<(), reqwest::Error> {
                 .await?;
         let quote: Quote = response.json().await?;
 
-        let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
+        let mut image = ImageBuffer::from_pixel(WIDTH, HEIGHT, Rgb([255, 255, 255]));
         draw_image(quote, &mut image);
         let _ = image.save(Path::new("monitor.bmp")).unwrap();
 

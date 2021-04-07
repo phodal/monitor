@@ -64,13 +64,16 @@ fn execute_command() {
 fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let font = read_font();
 
-    let time_height = draw_time(image, &font);
-    draw_sentence(quote.quote.as_str(), image, &font, time_height);
-    draw_sentence(quote.solution.as_str(), image, &font, time_height + 80);
+    let time_size = 40;
+    draw_time(image, &font, time_size);
+
+    let text_size = 80;
+    draw_sentence(quote.quote.as_str(), text_size, image, &font, time_size);
+    draw_sentence(quote.solution.as_str(), text_size, image, &font, time_size + text_size);
 }
 
-fn draw_sentence(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
-    let main_scale = Scale { x: 80.0, y: 80.0 };
+fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
+    let main_scale = Scale { x: font_size as f32, y: font_size as f32 };
     let (w, h) = text_size(main_scale, &font, text);
     println!("width: {:?}, height: {:?}", w, h);
 
@@ -80,20 +83,17 @@ fn draw_sentence(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &F
     let mut index = 0;
 
     for sub in subs {
-        let y = index * 80 + offset;
+        let y = index * font_size + offset;
         draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, y, main_scale, &font, sub.as_str());
         index = index + 1;
     }
 }
 
-fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font) -> u32 {
-    let small_scale = Scale { x: 40.0, y: 40.0 };
+fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, font_size: u32)  {
+    let small_scale = Scale { x: font_size as f32, y: font_size as f32 };
 
     let time = time_now();
     draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, 0, small_scale, &font, time.as_str());
-
-    let offset = 40;
-    offset
 }
 
 fn read_font() -> Font<'static> {

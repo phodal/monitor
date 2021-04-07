@@ -29,7 +29,8 @@ async fn main() -> Result<(), reqwest::Error> {
 
         let quote: Quote = response.json().await?;
 
-        write_sentence(quote.quote.as_str());
+        let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
+        write_sentence(quote.quote.as_str(), image);
 
         execute_command();
     }
@@ -55,10 +56,8 @@ fn execute_command() {
     sleep(Duration::from_secs(60 * 30));
 }
 
-fn write_sentence(origin: &str) {
+fn write_sentence(origin: &str, mut image: ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let path = Path::new("monitor.bmp");
-
-    let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
 
     let font = read_font();
 

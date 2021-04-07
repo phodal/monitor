@@ -26,11 +26,12 @@ async fn main() -> Result<(), reqwest::Error> {
                 .bearer_auth("")
                 .send()
                 .await?;
-
         let quote: Quote = response.json().await?;
 
+        let path = Path::new("monitor.bmp");
         let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
-        write_sentence(quote.quote.as_str(), image);
+        write_sentence(quote.quote.as_str(), &mut image);
+        let _ = image.save(path).unwrap();
 
         execute_command();
     }
@@ -56,9 +57,7 @@ fn execute_command() {
     sleep(Duration::from_secs(60 * 30));
 }
 
-fn write_sentence(origin: &str, mut image: ImageBuffer<Rgb<u8>, Vec<u8>>) {
-    let path = Path::new("monitor.bmp");
-
+fn write_sentence(origin: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let font = read_font();
 
     let main_scale = Scale { x: 80.0, y: 80.0 };
@@ -68,18 +67,16 @@ fn write_sentence(origin: &str, mut image: ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let subs = text_to_vec(origin, sub_len);
 
     let time = time_now();
-    draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, 0, small_scale, &font, time.as_str());
+    draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, 0, small_scale, &font, time.as_str());
 
     let offset = 40;
 
     let mut index = 0;
     for sub in subs {
         let y = index * 80 + offset;
-        draw_text_mut(&mut image, Rgb([0u8, 0u8, 0u8]), 0, y, main_scale, &font, sub.as_str());
+        draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, y, main_scale, &font, sub.as_str());
         index = index + 1;
     }
-
-    let _ = image.save(path).unwrap();
 }
 
 fn read_font() -> Font<'static> {

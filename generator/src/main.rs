@@ -60,7 +60,7 @@ fn write_sentence(origin: &str) {
 
     let mut image = ImageBuffer::from_pixel(1280, 825, Rgb([255, 255, 255]));
 
-    let font = read_font("SourceCodePro-Regular.ttf");
+    let font = read_font();
 
     let main_scale = Scale { x: 80.0, y: 80.0 };
     let small_scale = Scale { x: 40.0, y: 40.0 };
@@ -83,8 +83,9 @@ fn write_sentence(origin: &str) {
     let _ = image.save(path).unwrap();
 }
 
-fn read_font(font_file: &str) -> Font<'static> {
-    let font = Vec::from(include_bytes!(font_file) as &[u8]);
+fn read_font() -> Font<'static> {
+    let str = include_bytes!("SourceCodePro-Regular.ttf") as &[u8];
+    let font = Vec::from(str);
     let font = Font::try_from_vec(font).unwrap();
     font
 }

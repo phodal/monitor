@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use chrono::prelude::*;
 use image::{ImageBuffer, Rgb};
-use imageproc::drawing::draw_text_mut;
+use imageproc::drawing::{draw_text_mut, text_size};
 use reqwest::Client;
 use rusttype::{Font, Scale};
 use serde::{Deserialize, Serialize};
@@ -18,6 +18,7 @@ struct Quote {
 }
 
 const FONT_BYTES: &'static [u8] = include_bytes!("wqy-microhei.ttc");
+const WIDTH: u32 = 1280;
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
@@ -68,10 +69,15 @@ fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
 }
 
 fn draw_sentence(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
-    let sub_len = 31;
+    let main_scale = Scale { x: 80.0, y: 80.0 };
+    let (w, h) = text_size(main_scale, &font, "您");
+    println!("width: {:?}, height: {:?}", w, h);
+
+    let sub_len: usize = (WIDTH / w as u32) as usize;
+    print!("sub_len: {:?}", sub_len);
     let subs = text_to_vec(text, sub_len);
     let mut index = 0;
-    let main_scale = Scale { x: 80.0, y: 80.0 };
+
     for sub in subs {
         let y = index * 80 + offset;
         draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, y, main_scale, &font, sub.as_str());

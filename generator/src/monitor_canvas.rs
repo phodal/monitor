@@ -3,8 +3,6 @@ use rusttype::{Font, Scale};
 use imageproc::drawing::{draw_text_mut, text_size};
 use crate::Position;
 
-const WIDTH: u32 = 1200;
-
 pub struct MonitorCanvas<'i> {
     pub image: &'i mut ImageBuffer<Rgb<u8>, Vec<u8>>,
     pub font: &'i Font<'i>,
@@ -39,15 +37,15 @@ impl<'i> MonitorCanvas<'i> {
         for text in split {
             for char in text.chars() {
                 let (w, _h) = text_size(scale, self.font, char.to_string().as_str());
-                if current_pos.x + w as u32 > WIDTH {
+                if current_pos.x + w as u32 > self.width {
                     line = line + 1;
                     current_pos.x = 0;
                     current_pos.y = current_pos.y + font_size;
                 }
 
                 draw_text_mut(self.image, Rgb([0u8, 0u8, 0u8]), current_pos.x, current_pos.y, scale, self.font, char.to_string().as_str());
-                if w < (font_size / 3 * 2) as i32 {
-                    current_pos.x = current_pos.x + font_size / 3 * 2;
+                if w == 0 {
+                    current_pos.x = current_pos.x + font_size / 3;
                 } else {
                     current_pos.x = current_pos.x + w as u32;
                 }

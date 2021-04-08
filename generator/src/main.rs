@@ -59,7 +59,7 @@ fn draw_content(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let mut canvas = MonitorCanvas::new(WIDTH, HEIGHT, &font, image);
     canvas.draw_english(time.as_str(), time_size, 0);
 
-    let text_size = 80;
+    let text_size = 60;
     canvas.draw_chinese(quote.quote.as_str(), text_size, time_size);
     canvas.draw_chinese(quote.solution.as_str(), text_size, time_size + text_size);
 }

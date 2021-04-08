@@ -26,7 +26,7 @@ struct Position {
 }
 
 const FONT_BYTES: &'static [u8] = include_bytes!("wqy-microhei.ttc");
-const WIDTH: u32 = 1280;
+const WIDTH: u32 = 1200;
 const HEIGHT: u32 = 825;
 
 #[tokio::main]

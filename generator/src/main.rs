@@ -74,14 +74,14 @@ fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
 
     let time = time_now();
     let time_size = 40;
-    draw_time(time.as_str(), image, &font, time_size, 0);
+    draw_time(time.as_str(), time_size, image, &font, 0);
 
     let text_size = 80;
     draw_sentence(quote.quote.as_str(), text_size, image, &font, time_size);
     draw_sentence(quote.solution.as_str(), text_size, image, &font, time_size + text_size);
 }
 
-fn draw_time(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, font_size: u32, offset: u32) {
+fn draw_time(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
     let small_scale = Scale { x: font_size as f32, y: font_size as f32 };
     draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, offset, small_scale, &font, text);
 }

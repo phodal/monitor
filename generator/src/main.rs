@@ -74,19 +74,19 @@ fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
 
     let time = time_now();
     let time_size = 40;
-    draw_time(time.as_str(), time_size, image, &font, 0);
+    draw_english(time.as_str(), time_size, image, &font, 0);
 
     let text_size = 80;
-    draw_sentence(quote.quote.as_str(), text_size, image, &font, time_size);
-    draw_sentence(quote.solution.as_str(), text_size, image, &font, time_size + text_size);
+    draw_chinese(quote.quote.as_str(), text_size, image, &font, time_size);
+    draw_chinese(quote.solution.as_str(), text_size, image, &font, time_size + text_size);
 }
 
-fn draw_time(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
+fn draw_english(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
     let small_scale = Scale { x: font_size as f32, y: font_size as f32 };
     draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, offset, small_scale, &font, text);
 }
 
-fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
+fn draw_chinese(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
     let scale = Scale { x: font_size as f32, y: font_size as f32 };
     let split = text.split("\n");
 

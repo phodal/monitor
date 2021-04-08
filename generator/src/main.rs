@@ -79,7 +79,13 @@ fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Ve
 
     let sub_len: usize = (WIDTH / h as u32) as usize;
     print!("sub_len: {:?}", sub_len);
-    let subs = text_to_vec(text, sub_len);
+
+    let split = text.split("\n");
+    let mut subs: Vec<String> = vec![];
+    for text in split {
+        let text_sub = text_to_vec(text, sub_len);
+        subs.extend(text_sub)
+    }
     let mut index = 0;
 
     for sub in subs {

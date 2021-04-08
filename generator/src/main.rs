@@ -9,6 +9,8 @@ use reqwest::Client;
 use rusttype::{Font, Scale};
 use serde::{Deserialize, Serialize};
 
+pub mod monitor_canvas;
+
 #[derive(Deserialize, Serialize, Debug)]
 struct Quote {
     id: i32,
@@ -70,12 +72,18 @@ fn execute_command() {
 fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let font = read_font();
 
+    let time = time_now();
     let time_size = 40;
-    draw_time(image, &font, time_size);
+    draw_time(time.as_str(), image, &font, time_size, 0);
 
     let text_size = 80;
     draw_sentence(quote.quote.as_str(), text_size, image, &font, time_size);
     draw_sentence(quote.solution.as_str(), text_size, image, &font, time_size + text_size);
+}
+
+fn draw_time(text: &str, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, font_size: u32, offset: u32) {
+    let small_scale = Scale { x: font_size as f32, y: font_size as f32 };
+    draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, offset, small_scale, &font, text);
 }
 
 fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
@@ -89,7 +97,7 @@ fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Ve
         let mut index = 0;
         for char in text.chars() {
             draw_by_letter(image, char.to_string().as_str(), font, main_scale, Position {
-                x: index * 80,
+                x: index * font_size,
                 y: line * font_size + offset
             });
             index = index + 1;
@@ -111,13 +119,6 @@ fn draw_by_letter(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, text: &str, font: &
         x: w as u32,
         y: h as u32
     }
-}
-
-fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, font_size: u32) {
-    let small_scale = Scale { x: font_size as f32, y: font_size as f32 };
-
-    let time = time_now();
-    draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, 0, small_scale, &font, time.as_str());
 }
 
 fn read_font() -> Font<'static> {

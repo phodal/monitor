@@ -4,10 +4,10 @@ use std::time::Duration;
 
 use chrono::prelude::*;
 use image::{ImageBuffer, Rgb};
-use imageproc::drawing::{draw_text_mut, text_size};
 use reqwest::Client;
-use rusttype::{Font, Scale};
+use rusttype::{Font};
 use serde::{Deserialize, Serialize};
+use crate::monitor_canvas::MonitorCanvas;
 
 pub mod monitor_canvas;
 
@@ -74,47 +74,11 @@ fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
 
     let time = time_now();
     let time_size = 40;
-    draw_english(time.as_str(), time_size, image, &font, 0);
+    MonitorCanvas::draw_english(time.as_str(), time_size, image, &font, 0);
 
     let text_size = 80;
-    draw_chinese(quote.quote.as_str(), text_size, image, &font, time_size);
-    draw_chinese(quote.solution.as_str(), text_size, image, &font, time_size + text_size);
-}
-
-fn draw_english(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
-    let small_scale = Scale { x: font_size as f32, y: font_size as f32 };
-    draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, offset, small_scale, &font, text);
-}
-
-fn draw_chinese(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
-    let scale = Scale { x: font_size as f32, y: font_size as f32 };
-    let split = text.split("\n");
-
-    let mut line = 0;
-    let mut current_pos = Position {
-        x: 0,
-        y: offset,
-    };
-    for text in split {
-        for char in text.chars() {
-            let (w, _h) = text_size(scale, font, char.to_string().as_str());
-            if current_pos.x + w as u32 > WIDTH {
-                line = line + 1;
-                current_pos.y = current_pos.y + font_size;
-            }
-
-            draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), current_pos.x, current_pos.y, scale, &font, char.to_string().as_str());
-            if w < (font_size / 3 * 2) as i32 {
-                current_pos.x = current_pos.x + font_size / 3 * 2;
-            } else {
-                current_pos.x = current_pos.x + w as u32;
-            }
-        }
-
-        line = line + 1;
-        current_pos.x = 0;
-        current_pos.y = current_pos.y + font_size;
-    }
+    MonitorCanvas::draw_chinese(quote.quote.as_str(), text_size, image, &font, time_size);
+    MonitorCanvas::draw_chinese(quote.solution.as_str(), text_size, image, &font, time_size + text_size);
 }
 
 fn read_font() -> Font<'static> {

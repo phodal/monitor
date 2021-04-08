@@ -1,6 +1,4 @@
 use std::path::Path;
-use std::thread::sleep;
-use std::time::Duration;
 
 use chrono::prelude::*;
 use image::{ImageBuffer, Rgb};
@@ -8,8 +6,10 @@ use reqwest::Client;
 use rusttype::{Font};
 use serde::{Deserialize, Serialize};
 use crate::monitor_canvas::MonitorCanvas;
+use crate::monitor::Monitor;
 
 pub mod monitor_canvas;
+pub mod monitor;
 
 #[derive(Deserialize, Serialize, Debug)]
 struct Quote {
@@ -45,10 +45,10 @@ async fn main() -> Result<(), reqwest::Error> {
         draw_content(data, &mut image);
         let _ = image.save(Path::new("monitor.bmp")).unwrap();
 
-        execute_command();
+        Monitor::display();
+        Monitor::m_sleep();
     }
 }
-
 
 fn draw_content(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let font = read_font();
@@ -75,24 +75,4 @@ fn time_now() -> String {
     let delayed_format = utc.format("%Y-%m-%d %H:%M:%S");
 
     format!("updated time: {}", delayed_format.to_string())
-}
-
-#[cfg(target_os = "macos")]
-fn execute_command() {
-    sleep(Duration::from_secs(10));
-}
-
-#[cfg(target_os = "linux")]
-fn execute_command() {
-    match std::process::Command::new("sudo")
-        .arg("epaper")
-        .arg("monitor.bmp")
-        .status() {
-        Ok(_status) => {}
-        Err(err) => {
-            println!("{:?}", err);
-        }
-    }
-
-    sleep(Duration::from_secs(60 * 30));
 }

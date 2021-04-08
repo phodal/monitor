@@ -41,6 +41,7 @@ impl<'i> MonitorCanvas<'i> {
                 let (w, _h) = text_size(scale, self.font, char.to_string().as_str());
                 if current_pos.x + w as u32 > WIDTH {
                     line = line + 1;
+                    current_pos.x = 0;
                     current_pos.y = current_pos.y + font_size;
                 }
 

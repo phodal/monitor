@@ -80,33 +80,37 @@ fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
 
 fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
     let main_scale = Scale { x: font_size as f32, y: font_size as f32 };
-    let (w, h) = text_size(main_scale, &font, text);
-    println!("width: {:?}, height: {:?}", w, h);
-
-    let sub_len: usize = (WIDTH / h as u32) as usize;
-    println!("sub_len: {:?}", sub_len);
-
     let split = text.split("\n");
-    let mut subs: Vec<String> = vec![];
-    for text in split {
-        let text_sub = text_to_vec(text, sub_len);
-        subs.extend(text_sub)
-    }
-    let mut index = 0;
 
-    for sub in subs {
-        let y = index * font_size + offset;
-        draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), 0, y, main_scale, &font, sub.as_str());
-        index = index + 1;
+    let len = WIDTH / font_size;
+
+    let mut line = 0;
+    for text in split {
+        let mut index = 0;
+        for char in text.chars() {
+            draw_by_letter(image, char.to_string().as_str(), font, main_scale, Position {
+                x: index * 80,
+                y: line * font_size + offset
+            });
+            index = index + 1;
+
+            if index >= len {
+                index = 0;
+                line = line + 1;
+            }
+        }
+
+        line = line + 1;
     }
 }
 
-// todo: add support for draw by letters
-#[allow(dead_code)]
-fn draw_by_letter(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, text: &str, font: &Font, scale: Scale, last_pos: Position) {
-    let (_w, _h) = text_size(scale, font, text);
+fn draw_by_letter(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, text: &str, font: &Font, scale: Scale, last_pos: Position) -> Position {
+    let (w, h) = text_size(scale, font, text);
     draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), last_pos.x, last_pos.y, scale, &font, text);
-
+    Position {
+        x: w as u32,
+        y: h as u32
+    }
 }
 
 fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, font_size: u32) {
@@ -122,6 +126,7 @@ fn read_font() -> Font<'static> {
     font
 }
 
+#[allow(dead_code)]
 fn text_to_vec(origin: &str, sub_len: usize) -> Vec<String> {
     let chars: Vec<char> = origin.chars().collect();
     let subs = &chars.chunks(sub_len)

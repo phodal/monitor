@@ -87,37 +87,30 @@ fn draw_time(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8
 }
 
 fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, offset: u32) {
-    let main_scale = Scale { x: font_size as f32, y: font_size as f32 };
+    let scale = Scale { x: font_size as f32, y: font_size as f32 };
     let split = text.split("\n");
 
-    let len = WIDTH / font_size;
-
     let mut line = 0;
+    let mut current_pos = Position {
+        x: 0,
+        y: offset,
+    };
     for text in split {
-        let mut index = 0;
         for char in text.chars() {
-            draw_by_letter(image, char.to_string().as_str(), font, main_scale, Position {
-                x: index * font_size,
-                y: line * font_size + offset
-            });
-            index = index + 1;
-
-            if index >= len {
-                index = 0;
+            let (w, _h) = text_size(scale, font, char.to_string().as_str());
+            if current_pos.x + w as u32 > WIDTH {
                 line = line + 1;
+                current_pos.y = current_pos.y + font_size;
             }
+
+            draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), current_pos.x, current_pos.y, scale, &font, char.to_string().as_str());
+
+            current_pos.x = current_pos.x + w as u32;
         }
 
         line = line + 1;
-    }
-}
-
-fn draw_by_letter(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, text: &str, font: &Font, scale: Scale, last_pos: Position) -> Position {
-    let (w, h) = text_size(scale, font, text);
-    draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), last_pos.x, last_pos.y, scale, &font, text);
-    Position {
-        x: w as u32,
-        y: h as u32
+        current_pos.x = 0;
+        current_pos.y = current_pos.y + font_size;
     }
 }
 

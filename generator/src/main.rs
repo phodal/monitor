@@ -126,16 +126,6 @@ fn read_font() -> Font<'static> {
     font
 }
 
-#[allow(dead_code)]
-fn text_to_vec(origin: &str, sub_len: usize) -> Vec<String> {
-    let chars: Vec<char> = origin.chars().collect();
-    let subs = &chars.chunks(sub_len)
-        .map(|chunk| chunk.iter().collect::<String>())
-        .collect::<Vec<_>>();
-
-    subs.to_vec()
-}
-
 fn time_now() -> String {
     let utc: DateTime<Local> = Local::now();
     let delayed_format = utc.format("%Y-%m-%d %H:%M:%S");

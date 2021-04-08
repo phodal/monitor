@@ -74,11 +74,13 @@ fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
 
     let time = time_now();
     let time_size = 40;
-    MonitorCanvas::draw_english(time.as_str(), time_size, image, &font, 0);
+
+    let mut canvas = MonitorCanvas::new(WIDTH, HEIGHT, &font, image);
+    canvas.draw_english(time.as_str(), time_size, 0);
 
     let text_size = 80;
-    MonitorCanvas::draw_chinese(quote.quote.as_str(), text_size, image, &font, time_size);
-    MonitorCanvas::draw_chinese(quote.solution.as_str(), text_size, image, &font, time_size + text_size);
+    canvas.draw_chinese(quote.quote.as_str(), text_size, time_size);
+    canvas.draw_chinese(quote.solution.as_str(), text_size, time_size + text_size);
 }
 
 fn read_font() -> Font<'static> {

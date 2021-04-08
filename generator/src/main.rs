@@ -104,8 +104,11 @@ fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Ve
             }
 
             draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), current_pos.x, current_pos.y, scale, &font, char.to_string().as_str());
-
-            current_pos.x = current_pos.x + w as u32;
+            if w < (font_size / 3 * 2) as i32 {
+                current_pos.x = current_pos.x + font_size / 3 * 2;
+            } else {
+                current_pos.x = current_pos.x + w as u32;
+            }
         }
 
         line = line + 1;

@@ -17,6 +17,12 @@ struct Quote {
     author: String,
 }
 
+#[derive(Deserialize, Serialize, Debug)]
+struct Position {
+    x: u32,
+    y: u32,
+}
+
 const FONT_BYTES: &'static [u8] = include_bytes!("wqy-microhei.ttc");
 const WIDTH: u32 = 1280;
 const HEIGHT: u32 = 825;
@@ -78,7 +84,7 @@ fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Ve
     println!("width: {:?}, height: {:?}", w, h);
 
     let sub_len: usize = (WIDTH / h as u32) as usize;
-    print!("sub_len: {:?}", sub_len);
+    println!("sub_len: {:?}", sub_len);
 
     let split = text.split("\n");
     let mut subs: Vec<String> = vec![];
@@ -95,7 +101,15 @@ fn draw_sentence(text: &str, font_size: u32, image: &mut ImageBuffer<Rgb<u8>, Ve
     }
 }
 
-fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, font_size: u32)  {
+// todo: add support for draw by letters
+#[allow(dead_code)]
+fn draw_by_letter(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, text: &str, font: &Font, scale: Scale, last_pos: Position) {
+    let (_w, _h) = text_size(scale, font, text);
+    draw_text_mut(image, Rgb([0u8, 0u8, 0u8]), last_pos.x, last_pos.y, scale, &font, text);
+
+}
+
+fn draw_time(image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, font: &Font, font_size: u32) {
     let small_scale = Scale { x: font_size as f32, y: font_size as f32 };
 
     let time = time_now();

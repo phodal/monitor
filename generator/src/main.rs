@@ -39,37 +39,18 @@ async fn main() -> Result<(), reqwest::Error> {
                 .bearer_auth("")
                 .send()
                 .await?;
-        let quote: Quote = response.json().await?;
+        let data: Quote = response.json().await?;
 
         let mut image = ImageBuffer::from_pixel(WIDTH, HEIGHT, Rgb([255, 255, 255]));
-        draw_image(quote, &mut image);
+        draw_content(data, &mut image);
         let _ = image.save(Path::new("monitor.bmp")).unwrap();
 
         execute_command();
     }
 }
 
-#[cfg(target_os = "macos")]
-fn execute_command() {
-    sleep(Duration::from_secs(10));
-}
 
-#[cfg(target_os = "linux")]
-fn execute_command() {
-    match std::process::Command::new("sudo")
-        .arg("epaper")
-        .arg("monitor.bmp")
-        .status() {
-        Ok(_status) => {}
-        Err(err) => {
-            println!("{:?}", err);
-        }
-    }
-
-    sleep(Duration::from_secs(60 * 30));
-}
-
-fn draw_image(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
+fn draw_content(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let font = read_font();
 
     let time = time_now();
@@ -94,4 +75,24 @@ fn time_now() -> String {
     let delayed_format = utc.format("%Y-%m-%d %H:%M:%S");
 
     format!("updated time: {}", delayed_format.to_string())
+}
+
+#[cfg(target_os = "macos")]
+fn execute_command() {
+    sleep(Duration::from_secs(10));
+}
+
+#[cfg(target_os = "linux")]
+fn execute_command() {
+    match std::process::Command::new("sudo")
+        .arg("epaper")
+        .arg("monitor.bmp")
+        .status() {
+        Ok(_status) => {}
+        Err(err) => {
+            println!("{:?}", err);
+        }
+    }
+
+    sleep(Duration::from_secs(60 * 30));
 }

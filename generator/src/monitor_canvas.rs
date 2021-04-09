@@ -25,6 +25,12 @@ impl<'i> MonitorCanvas<'i> {
         draw_text_mut(self.image, Rgb([0u8, 0u8, 0u8]), 0, offset, small_scale, self.font, text);
     }
 
+    // todo
+    #[allow(dead_code)]
+    fn handle_for_special_char() {
+
+    }
+
     pub fn draw_chinese(&mut self, text: &str, font_size: u32, offset: u32) {
         let scale = Scale { x: font_size as f32, y: font_size as f32 };
         let split = text.split("\n");

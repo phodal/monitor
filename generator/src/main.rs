@@ -43,9 +43,10 @@ async fn main() -> Result<(), reqwest::Error> {
 
         let mut image = ImageBuffer::from_pixel(WIDTH, HEIGHT, Rgb([255, 255, 255]));
         draw_content(data, &mut image);
-        let _ = image.save(Path::new("monitor.bmp")).unwrap();
+        let image_name = "monitor.bmp";
+        let _ = image.save(Path::new(image_name)).unwrap();
 
-        Monitor::display();
+        Monitor::display(image_name);
         Monitor::m_sleep();
     }
 }

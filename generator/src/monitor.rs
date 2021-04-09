@@ -5,7 +5,7 @@ pub struct Monitor;
 
 impl Monitor {
     #[cfg(target_os = "macos")]
-    pub fn display() {}
+    pub fn display(_image: &str) {}
 
     #[cfg(target_os = "macos")]
     pub fn m_sleep() {
@@ -18,10 +18,10 @@ impl Monitor {
     }
 
     #[cfg(target_os = "linux")]
-    pub fn display() {
+    pub fn display(image: &str) {
         match std::process::Command::new("sudo")
             .arg("epaper")
-            .arg("monitor.bmp")
+            .arg(image)
             .status() {
             Ok(_status) => {}
             Err(err) => {

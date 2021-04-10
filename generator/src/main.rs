@@ -12,6 +12,7 @@ use std::io::Read;
 
 pub mod monitor_canvas;
 pub mod monitor;
+pub mod todo;
 
 #[derive(Deserialize, Serialize, Debug)]
 struct Quote {
@@ -53,14 +54,7 @@ async fn main() -> Result<(), reqwest::Error> {
                 .await?;
         println!("{:?}", response.text().await?);
 
-        let request_url = format!("https://phodal.github.io/monitor-api/api.json");
-        let client = Client::new();
-        let response =
-            client.get(&request_url)
-                .bearer_auth("")
-                .send()
-                .await?;
-        let data: Quote = response.json().await?;
+        let data = get_display_data().await?;
 
         let mut image = ImageBuffer::from_pixel(WIDTH, HEIGHT, Rgb([255, 255, 255]));
         draw_content(data, &mut image);
@@ -70,6 +64,18 @@ async fn main() -> Result<(), reqwest::Error> {
         Monitor::display(image_name);
         Monitor::m_sleep();
     }
+}
+
+async fn get_display_data() -> Result<Quote, reqwest::Error> {
+    let request_url = format!("https://phodal.github.io/monitor-api/api.json");
+    let client = Client::new();
+    let response =
+        client.get(&request_url)
+            .bearer_auth("")
+            .send()
+            .await?;
+    let data: Quote = response.json().await?;
+    Ok(data)
 }
 
 fn draw_content(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {

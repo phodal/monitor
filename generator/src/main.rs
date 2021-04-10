@@ -9,6 +9,7 @@ use crate::monitor_canvas::MonitorCanvas;
 use crate::monitor::Monitor;
 use std::fs::File;
 use std::io::Read;
+use crate::todo::{TodoResponse, TodoItem};
 
 pub mod monitor_canvas;
 pub mod monitor;
@@ -31,7 +32,7 @@ struct Position {
 #[derive(Deserialize, Serialize, Debug)]
 struct MonitorConfig {
     id: String,
-    token: String
+    token: String,
 }
 
 const FONT_BYTES: &'static [u8] = include_bytes!("wqy-microhei.ttc");
@@ -43,27 +44,31 @@ async fn main() -> Result<(), reqwest::Error> {
     let config = read_config();
 
     loop {
-        let ms_url = format!("https://graph.microsoft.com/v1.0/me/todo/lists/{id}/tasks",
-                                  id = &config.id);
-        println!("{}", ms_url);
-        let client = Client::new();
-        let response =
-            client.get(&ms_url)
-                .bearer_auth(&config.token)
-                .send()
-                .await?;
-        println!("{:?}", response.text().await?);
-
+        let todos = get_todo(&config).await?;
         let data = get_display_data().await?;
 
         let mut image = ImageBuffer::from_pixel(WIDTH, HEIGHT, Rgb([255, 255, 255]));
-        draw_content(data, &mut image);
+        draw_content(todos, data, &mut image);
         let image_name = "monitor.bmp";
         let _ = image.save(Path::new(image_name)).unwrap();
 
         Monitor::display(image_name);
         Monitor::m_sleep();
     }
+}
+
+async fn get_todo(config: &MonitorConfig) -> Result<Vec<TodoItem>, reqwest::Error> {
+    let ms_url = format!("https://graph.microsoft.com/v1.0/me/todo/lists/{id}/tasks",
+                         id = &config.id);
+    let client = Client::new();
+    let response =
+        client.get(&ms_url)
+            .bearer_auth(&config.token)
+            .send()
+            .await?;
+
+    let todo: TodoResponse = response.json().await?;
+    Ok(todo.value)
 }
 
 async fn get_display_data() -> Result<Quote, reqwest::Error> {
@@ -78,18 +83,27 @@ async fn get_display_data() -> Result<Quote, reqwest::Error> {
     Ok(data)
 }
 
-fn draw_content(quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
+fn draw_content(todos: Vec<TodoItem>, quote: Quote, image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>) {
     let font = read_font();
 
     let time = time_now();
     let time_size = 40;
+    let mut offset = 0;
 
     let mut canvas = MonitorCanvas::new(WIDTH, HEIGHT, &font, image);
-    canvas.draw_english(time.as_str(), time_size, 0);
+    canvas.draw_english(time.as_str(), time_size, offset);
+
+    offset = offset + time_size;
 
     let text_size = 60;
-    canvas.draw_chinese(quote.quote.as_str(), text_size, time_size);
-    canvas.draw_chinese(quote.solution.as_str(), text_size, time_size + text_size);
+    for item in &todos[..3] {
+        let title = format!(" [ ] {}", item.title);
+        canvas.draw_chinese(title.as_str(), text_size, offset);
+        offset = offset + text_size;
+    }
+    canvas.draw_chinese(quote.quote.as_str(), text_size, offset);
+    offset = offset + text_size;
+    canvas.draw_chinese(quote.solution.as_str(), text_size, offset);
 }
 
 fn read_font() -> Font<'static> {

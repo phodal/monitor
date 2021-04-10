@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Todo {
+pub struct TodoResponse {
     #[serde(rename = "@odata.context")]
     pub odata_context: String,
     pub value: Vec<TodoItem>,

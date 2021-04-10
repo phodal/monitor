@@ -2,6 +2,7 @@ use image::{ImageBuffer, Rgb};
 use rusttype::{Font, Scale};
 use imageproc::drawing::{draw_text_mut, text_size};
 use crate::Position;
+use regex::Regex;
 
 pub struct MonitorCanvas<'i> {
     pub image: &'i mut ImageBuffer<Rgb<u8>, Vec<u8>>,
@@ -16,7 +17,7 @@ impl<'i> MonitorCanvas<'i> {
             image,
             font,
             width,
-            height
+            height,
         }
     }
 
@@ -25,10 +26,9 @@ impl<'i> MonitorCanvas<'i> {
         draw_text_mut(self.image, Rgb([0u8, 0u8, 0u8]), 0, offset, small_scale, self.font, text);
     }
 
-    // todo
-    #[allow(dead_code)]
-    fn handle_for_special_char() {
-
+    pub fn is_need_space(str: &str) -> bool {
+        let space_char = Regex::new("[，。！《》『』？、,.?\"]").unwrap();
+        space_char.is_match(str)
     }
 
     pub fn draw_chinese(&mut self, text: &str, font_size: u32, offset: u32) {
@@ -52,6 +52,8 @@ impl<'i> MonitorCanvas<'i> {
                 draw_text_mut(self.image, Rgb([0u8, 0u8, 0u8]), current_pos.x, current_pos.y, scale, self.font, char.to_string().as_str());
                 if w == 0 {
                     current_pos.x = current_pos.x + font_size / 3;
+                } else if MonitorCanvas::is_need_space(char.to_string().as_str()) {
+                    current_pos.x = current_pos.x + font_size * 2 / 3;
                 } else {
                     current_pos.x = current_pos.x + w as u32;
                 }
@@ -64,3 +66,16 @@ impl<'i> MonitorCanvas<'i> {
     }
 }
 
+
+#[cfg(test)]
+mod tests {
+    use crate::monitor_canvas::MonitorCanvas;
+
+    #[test]
+    fn should_handle_for_chinese_chars() {
+        assert!(MonitorCanvas::is_need_space("，"));
+        assert!(MonitorCanvas::is_need_space(","));
+        assert!(MonitorCanvas::is_need_space("。"));
+        assert!(MonitorCanvas::is_need_space("."));
+    }
+}

@@ -31,8 +31,9 @@ impl<'i> MonitorCanvas<'i> {
         space_char.is_match(str)
     }
 
-    pub fn draw_chinese(&mut self, text: &str, font_size: u32, offset: u32) {
+    pub fn draw_chinese(&mut self, source: &str, font_size: u32, offset: u32) {
         let scale = Scale { x: font_size as f32, y: font_size as f32 };
+        let text = source.replace("->", "→");
         let split = text.split("\n");
 
         let mut line = 0;

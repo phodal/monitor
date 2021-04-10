@@ -7,6 +7,8 @@ use rusttype::{Font};
 use serde::{Deserialize, Serialize};
 use crate::monitor_canvas::MonitorCanvas;
 use crate::monitor::Monitor;
+use std::fs::File;
+use std::io::Read;
 
 pub mod monitor_canvas;
 pub mod monitor;
@@ -25,13 +27,32 @@ struct Position {
     y: u32,
 }
 
+#[derive(Deserialize, Serialize, Debug)]
+struct MonitorConfig {
+    id: String,
+    token: String
+}
+
 const FONT_BYTES: &'static [u8] = include_bytes!("wqy-microhei.ttc");
 const WIDTH: u32 = 1200;
 const HEIGHT: u32 = 825;
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
+    let config = read_config();
+
     loop {
+        let ms_url = format!("https://graph.microsoft.com/v1.0/me/todo/lists/{id}/tasks",
+                                  id = &config.id);
+        println!("{}", ms_url);
+        let client = Client::new();
+        let response =
+            client.get(&ms_url)
+                .bearer_auth(&config.token)
+                .send()
+                .await?;
+        println!("{:?}", response.text().await?);
+
         let request_url = format!("https://phodal.github.io/monitor-api/api.json");
         let client = Client::new();
         let response =
@@ -77,3 +98,33 @@ fn time_now() -> String {
 
     format!("updated time: {}", delayed_format.to_string())
 }
+
+fn read_config() -> MonitorConfig {
+    let mut file = File::open("monitor_config.json").unwrap();
+    let mut data = String::new();
+    file.read_to_string(&mut data).unwrap();
+
+    let config: MonitorConfig = match serde_json::from_str(&data) {
+        Ok(x) => x,
+        Err(err) => {
+            panic!(err)
+        }
+    };
+
+    config
+}
+
+
+#[cfg(test)]
+mod tests {
+    use crate::read_config;
+
+    #[ignore]
+    #[test]
+    fn should_read_config() {
+        let config = read_config();
+        println!("config: {:?}", config);
+    }
+}
+
+

@@ -21,3 +21,4 @@
 rusti.sh
 Cargo.lock
 monitor.bmp
+monitor_config.json

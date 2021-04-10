@@ -9,6 +9,7 @@ screen size: 1200 × 825
     - [x] with Rust
     - [x] call with Rust
     - [x] interval timer
+ - [x] microsoft todo
 
 ## Setup
 

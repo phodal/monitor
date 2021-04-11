@@ -41,10 +41,11 @@ const HEIGHT: u32 = 825;
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
-    let config = read_config();
+    let _config = read_config();
 
     loop {
-        let todos = get_todo(&config).await?;
+        let todos: Vec<TodoItem> = vec![];
+        // let todos = get_todo(&config).await?;
         let data = get_display_data().await?;
 
         let mut image = ImageBuffer::from_pixel(WIDTH, HEIGHT, Rgb([255, 255, 255]));
@@ -57,6 +58,7 @@ async fn main() -> Result<(), reqwest::Error> {
     }
 }
 
+#[allow(dead_code)]
 async fn get_todo(config: &MonitorConfig) -> Result<Vec<TodoItem>, reqwest::Error> {
     let ms_url = format!("https://graph.microsoft.com/v1.0/me/todo/lists/{id}/tasks",
                          id = &config.id);
@@ -105,7 +107,7 @@ fn draw_content(todos: Vec<TodoItem>, quote: Quote, image: &mut ImageBuffer<Rgb<
     offset = offset + time_size;
 
     let text_size = 60;
-    for item in &todos[..3] {
+    for item in &todos {
         let title = format!(" [ ] {}", item.title);
         canvas.draw_chinese(title.as_str(), text_size, offset);
         offset = offset + text_size;

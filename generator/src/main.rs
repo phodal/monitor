@@ -2,7 +2,7 @@ use std::path::Path;
 
 use chrono::prelude::*;
 use image::{ImageBuffer, Rgb};
-use reqwest::Client;
+use reqwest::{Client};
 use rusttype::{Font};
 use serde::{Deserialize, Serialize};
 use crate::monitor_canvas::MonitorCanvas;
@@ -67,8 +67,17 @@ async fn get_todo(config: &MonitorConfig) -> Result<Vec<TodoItem>, reqwest::Erro
             .send()
             .await?;
 
-    let todo: TodoResponse = response.json().await?;
-    Ok(todo.value)
+
+    match response.error_for_status() {
+        Ok(res) => {
+            let todo: TodoResponse = res.json().await?;
+            Ok(todo.value)
+        }
+        Err(err) => {
+            println!("{:?}", err);
+            Err(err)
+        }
+    }
 }
 
 async fn get_display_data() -> Result<Quote, reqwest::Error> {
@@ -101,8 +110,7 @@ fn draw_content(todos: Vec<TodoItem>, quote: Quote, image: &mut ImageBuffer<Rgb<
         canvas.draw_chinese(title.as_str(), text_size, offset);
         offset = offset + text_size;
     }
-    canvas.draw_chinese(quote.quote.as_str(), text_size, offset);
-    offset = offset + text_size;
+
     canvas.draw_chinese(quote.solution.as_str(), text_size, offset);
 }
 

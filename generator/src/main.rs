@@ -106,14 +106,20 @@ fn draw_content(todos: Vec<TodoItem>, quote: Quote, image: &mut ImageBuffer<Rgb<
 
     offset = offset + time_size;
 
+    let text_size = draw_todos(&todos, offset, &mut canvas);
+
+    canvas.draw_chinese(quote.solution.as_str(), text_size, offset);
+}
+
+fn draw_todos(todos: &Vec<TodoItem>, mut offset: u32, canvas: &mut MonitorCanvas) -> u32 {
     let text_size = 60;
-    for item in &todos {
+    for item in todos {
         let title = format!(" [ ] {}", item.title);
         canvas.draw_chinese(title.as_str(), text_size, offset);
         offset = offset + text_size;
     }
 
-    canvas.draw_chinese(quote.solution.as_str(), text_size, offset);
+    text_size
 }
 
 fn read_font() -> Font<'static> {

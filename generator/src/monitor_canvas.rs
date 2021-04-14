@@ -3,6 +3,7 @@ use rusttype::{Font, Scale};
 use imageproc::drawing::{draw_text_mut, text_size};
 use crate::Position;
 use regex::Regex;
+use crate::color::COLOR_BLACK;
 
 pub struct MonitorCanvas<'i> {
     pub image: &'i mut ImageBuffer<Rgb<u8>, Vec<u8>>,
@@ -23,7 +24,7 @@ impl<'i> MonitorCanvas<'i> {
 
     pub fn draw_english(&mut self, text: &str, font_size: u32, offset: u32) {
         let small_scale = Scale { x: font_size as f32, y: font_size as f32 };
-        draw_text_mut(self.image, Rgb([0u8, 0u8, 0u8]), 0, offset, small_scale, self.font, text);
+        draw_text_mut(self.image, COLOR_BLACK, 0, offset, small_scale, self.font, text);
     }
 
     pub fn is_need_space(str: &str) -> bool {
@@ -50,7 +51,7 @@ impl<'i> MonitorCanvas<'i> {
                     current_pos.y = current_pos.y + font_size;
                 }
 
-                draw_text_mut(self.image, Rgb([0u8, 0u8, 0u8]), current_pos.x, current_pos.y, scale, self.font, char.to_string().as_str());
+                draw_text_mut(self.image, COLOR_BLACK, current_pos.x, current_pos.y, scale, self.font, char.to_string().as_str());
                 if w == 0 {
                     current_pos.x = current_pos.x + font_size / 3;
                 } else if MonitorCanvas::is_need_space(char.to_string().as_str()) {

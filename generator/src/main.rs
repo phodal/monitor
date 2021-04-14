@@ -10,10 +10,12 @@ use crate::monitor::Monitor;
 use std::fs::File;
 use std::io::Read;
 use crate::todo::{TodoResponse, TodoItem};
+use crate::color::COLOR_WHITE;
 
 pub mod monitor_canvas;
 pub mod monitor;
 pub mod todo;
+pub mod color;
 
 #[derive(Deserialize, Serialize, Debug)]
 struct Quote {
@@ -48,7 +50,7 @@ async fn main() -> Result<(), reqwest::Error> {
         // let todos = get_todo(&config).await?;
         let data = get_display_data().await?;
 
-        let mut image = ImageBuffer::from_pixel(WIDTH, HEIGHT, Rgb([255, 255, 255]));
+        let mut image = ImageBuffer::from_pixel(WIDTH, HEIGHT, COLOR_WHITE);
         draw_content(todos, data, &mut image);
         let image_name = "monitor.bmp";
         let _ = image.save(Path::new(image_name)).unwrap();
@@ -68,7 +70,6 @@ async fn get_todo(config: &MonitorConfig) -> Result<Vec<TodoItem>, reqwest::Erro
             .bearer_auth(&config.token)
             .send()
             .await?;
-
 
     match response.error_for_status() {
         Ok(res) => {

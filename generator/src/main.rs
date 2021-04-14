@@ -31,6 +31,7 @@ struct Position {
     y: u32,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Serialize, Debug)]
 struct MonitorConfig {
     id: String,
@@ -43,7 +44,7 @@ const HEIGHT: u32 = 825;
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
-    let _config = read_config();
+    // let _config = read_config("monitor_config.json");
 
     loop {
         let todos: Vec<TodoItem> = vec![];
@@ -136,8 +137,9 @@ fn time_now() -> String {
     format!("updated time: {}", delayed_format.to_string())
 }
 
-fn read_config() -> MonitorConfig {
-    let mut file = File::open("monitor_config.json").unwrap();
+#[allow(dead_code)]
+fn read_config(file_name: &str) -> MonitorConfig {
+    let mut file = File::open(file_name).unwrap();
     let mut data = String::new();
     file.read_to_string(&mut data).unwrap();
 

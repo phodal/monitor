@@ -146,7 +146,7 @@ fn read_config(file_name: &str) -> MonitorConfig {
     let config: MonitorConfig = match serde_json::from_str(&data) {
         Ok(x) => x,
         Err(err) => {
-            panic!(err)
+            panic!("{}", err)
         }
     };
 
@@ -161,7 +161,7 @@ mod tests {
     #[ignore]
     #[test]
     fn should_read_config() {
-        let config = read_config();
+        let config = read_config("monitor_config.json");
         println!("config: {:?}", config);
     }
 }
